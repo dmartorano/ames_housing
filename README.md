@@ -1,185 +1,64 @@
-# Project 2 - Ames Housing Data and Kaggle Challenge
+# Consultation for Ames, IA Realtor Focused on Incoming University Professors
 
-Welcome to Project 2! It's time to start modeling.
+## Data Used
 
-**Primary Learning Objectives:**
+test.csv - Pre-supplied testing data for testing and modeling for Kaggle competition
+clean_test.csv - Cleaned testing data to the specifications of the Kaggle submission
+train.csv - Pre-supplied training data for creating and modeling data to answer data science problem
+clean_train.csv - Training data cleaned based on needs of answering data science problem
+engineered_train.csv - Training data including feature engineering and outlier mitigation
+submission.csv - Two-column file including house sale ID and sale price prediction for purpose of Kaggle submission
 
-1. Creating and iteratively refining a regression model
-1. Using [Kaggle](https://www.kaggle.com/) to practice the modeling process
-1. Providing business insights through reporting and presentation.
+## Problem Statement
 
-You are tasked with creating a regression model based on the Ames Housing Dataset. This model will predict the price of a house at sale.
+A realtor in Ames, IA has reached out to a data scientist for a consult. Their preferred clientele are professors moving from far-away places (i.e. not familiar with Iowa). As a realtor in Iowa, they are hyperfixated on tornado safety, and want to provide homes to their clients that have reasonably good quality basements in case they spend an abundance of time there due to tornadoes. That being said, they also seek to find their clients homes in neighborhoods close to Iowa State University. For their consult, they want help creating a model that helps them predict good sale prices for homes with good quality basements near Iowa State in order to make sure they can satisfy their fixation on a good basement while minimizing the commutes of their clients and making sure they get a good deal on a home. 
 
-The Ames Housing Dataset is an exceptionally detailed and robust dataset with over 70 columns of different features relating to houses.
+## Data Dictionary
 
-Secondly, we are hosting a competition on Kaggle to give you the opportunity to practice the following skills:
+|Feature|Type|Description|
+|---|---|---|
+|lot_area|int|The square footage of the lot that a home is on|
+|1st_flr_sf|int|The square footage of the first floor of a home|
+|2nd_flr_sf|int|The square footage of the second floor of a home|
+|bsmtfin_sf_1|int|The square footage of the primary finished basement of a home|
+|bsmtfin_sf_2|int|The square footage of the secondary finished basement of a home|
+|bsmt_unf_sf|int|The square footage of the unfinished basement of a home|
+|1stflr_bsmtfin1_sf|int|Interaction term of 1st_flr_sf and bsmtfin_sf_1|
+|bsmt_full_bath|int|Number of full baths in the basement of a home|
+|bsmt_half_bath|int|Number of half baths in the basement of a home|
+|neighborhood_CollgCr|int|Determines if home is located in College Creek neighborhood|
+|neighborhood_Crawfor|int|Determines if home is located in Crawford neighborhood|
+|neighborhood_Edwards|int|Determines if home is located in Edwards neighborhood|
+|neighborhood_MeadowV|int|Determines if home is located in Meadow Valley neighborhood|
+|neighborhood_NoRidge|int|Determines if home is located in Northridge neighborhood|
+|neighborhood_SWISU|int|Determines if home is located in neighborhood south and west of ISU|
+|neighborhood_Sawyer|int|Determines if home is located in Sawyer neighborhood|
+|neighborhood_SawyerW|int|Determines if home is located in Sawyer West neighborhood|
+|bsmt_qual_Ex|int|Determines if basement is 90-100 inches tall|
+|bsmt_qual_Gd|int|Determines if basement is 80-90 inches tall|
+|bsmt_qual_TA|int|Determines if basement is 70-80 inches tall|
+|bsmt_cond_Gd|int|Determines if basement is in good or better condition i.e. no moisture allowed in|
+|bsmt_exposure_Av|int|Determines if exposure of basement is of average quality|
+|bsmt_exposure_Gd|int|Determines if exposure of basement is of good quality|
+|bsmtfin_type_1_GLQ|int|Determines if primary finished basement area contains good quality living quarters|
+|bsmtfin_type_1_ALQ|int|Determines if primary finished basement area contains average quality living quarters|
+|bsmtfin_type_2_GLQ|int|Determines if secondary finished basement area contains good quality living quarters|
+|bsmtfin_type_2_ALQ|int|Determines if secondary finished basement area contains average quality living quarters|
+|bsmtfin_type_2_Rec|int|Determines if secondary finished basement area is used as a rec room|
+|neighborhood|object|The neighborhood that the home is in|
+|bsmt_qual|object|Determines basement height|
+|bsmt_cond|object|Determines overall basement condition i.e. dampness, insulation, etc.|
+|bsmt_exposure|object|Refers whether basement has walkout or garden level walls|
+|bsmt_type_1|object|Rating of type of primary space in basement|
+|bsmt_type_2|object|Rating of type of secondary space in basement if multiple types|
 
-- Refining models over time
-- Use of train-test split, cross-validation, and data with unknown values for the target to simulate the modeling process
-- The use of Kaggle as a place to practice data science
 
-As always, you will be submitting a technical report and a presentation. **You may find that the best model for Kaggle is not the best model to address your data science problem.**
+## Modeling Summary
 
-## Set-up
+The initial step required determining the features that would be vital to creating a model that fit the client's needs. In this case, since the client sought a model that would help predict prices based on a home's proximity to ISU, creating one-hot variables for neighborhoods to identify the impact that neighborhood has on price is crucial. The remaining features were all of those regarding basements, some of which also required one-hot encoding in order to be modeled. After fitting and testing a linear regression, LASSO, and Ridge model, it was found that the Ridge model provided the R-squared score closest to 1 after cross-validation. 
 
-Before you begin working on this project, please do the following:
+## Conclusions
 
-1. Sign up for an account on [Kaggle](https://www.kaggle.com/)
-2. **IMPORTANT**: Click the link [DSB-1211 Regression Challenge](https://www.kaggle.com/t/c00c62fe1141410c93c19e673f28b539) to **join** the competition (otherwise you will not be able to make submissions!)
-3. Review the material on the [DSB-1211 Regression Challenge](https://www.kaggle.com/competitions/dsb-1211-project-2-regression-challenge)
-4. Review the [data description](http://jse.amstat.org/v19n3/decock/DataDocumentation.txt).
+Overall, the model indicates that area-related features, i.e. lot size and various square footages, were the most significant predictors of sale price. However, all of the basement-related features that made it to the final model had positive impacts, especially finished basement size and the excellent and good quality basement features, all of which had coefficients into the tens of thousands. Neighborhood data was less impactful, with the majority of neighborhoods having negative coefficients, implying that neighborhoods around ISU tended to be less desirable with the exception of College Creek, Crawford, and Northridge, which had positive coefficients.
 
-## The Modeling Process
-
-1. The train dataset has all of the columns that you will need to generate and refine your models. The test dataset has all of those columns except for the target that you are trying to predict in your regression model.
-2. Generate your regression model using the training data. We expect that within this process, you'll be making use of:
-    - train-test split
-    - cross-validation / grid searching for hyperparameters
-    - strong exploratory data analysis to question correlation and relationship across predictive variables
-    - code that reproducibly and consistently applies feature transformation (such as the preprocessing library)
-3. Predict the values for your target column in the test dataset and submit your predictions to Kaggle to see how your model does against unknown data.
-    - **Note**: Kaggle expects to see your submissions in a specific format. Check the challenge's page to make sure you are formatting your CSVs correctly!
-    - **You are limited to models you've learned in class**. In other words, you cannot use XGBoost, Neural Networks or any other advanced model for this project.
-4. Evaluate your models!
-    - consider your evaluation metrics
-    - consider your baseline score
-    - how can your model be used for inference?
-    - why do you believe your model will generalize to new data?
-
-## Submission
-
-Materials must be submitted by the beginning of class on **Tuesday, January 16**.
-
-The last day for the Kaggle competition will be **Tuesday, January 16**.
-
-Your technical report will be hosted on Github Enterprise. Make sure it includes:
-
-- A README.md (that isn't this file)
-- Jupyter notebook(s) with your analysis and models (renamed to describe your project)
-- At least one successful prediction submission on [DSB-1211 Regression Challenge](https://www.kaggle.com/competitions/dsb-1211-project-2-regression-challenge) --  you should see your name in the "[Leaderboard](https://www.kaggle.com/competitions/dsb-1211-project-2-regression-challenge/leaderboard)" tab.
-- Data files
-- Presentation slides
-- Any other necessary files (images, etc.)
-
-**Repositories should be submitted on Google Classroom by the deadline.**
-
----
-
-## Presentation Structure
-
-- **Must be within time limit of 8 minutes.**
-- Use Google Slides or some other visual aid (Keynote, Powerpoint, etc).
-- Consider the audience.
-- Start with the **data science problem**.
-- Use visuals that are appropriately scaled and interpretable.
-- Talk about your procedure/methodology (high level).
-- Talk about your primary findings.
-- Make sure you provide **clear recommendations** that follow logically from your analyses and narrative and answer your data science problem.
-
-Be sure to rehearse and time your presentation before class.
-
----
-
-## Rubric
-
-Your local instructor will evaluate your project (for the most part) using the following criteria.  You should make sure that you consider and/or follow most if not all of the considerations/recommendations outlined below **while** working through your project.
-
-**Scores will be out of 27 points based on the 9 items in the rubric.** 
-*3 points per section*
-
-| Score | Interpretation |
-| --- | --- |
-| **0** | *Project fails to meet the minimum requirements for this item.* |
-| **1** | *Project meets the minimum requirements for this item, but falls significantly short of portfolio-ready expectations.* |
-| **2** | *Project exceeds the minimum requirements for this item, but falls short of portfolio-ready expectations.* |
-| **3** | *Project meets or exceeds portfolio-ready expectations; demonstrates a thorough understanding of every outlined consideration.* |
-
-### The Data Science Process
-
-**Problem Statement**
-- Is it clear what the student plans to do?
-- What type of model will be developed?
-- How will success be evaluated?
-- Is the scope of the project appropriate?
-- Is it clear who cares about this or why this is important to investigate?
-- Does the student consider the audience and the primary and secondary stakeholders?
-
-**Data Cleaning and EDA**
-- Are missing values imputed appropriately?
-- Are distributions examined and described?
-- Are outliers identified and addressed?
-- Are appropriate summary statistics provided?
-- Are steps taken during data cleaning and EDA framed appropriately?
-- Does the student address whether or not they are likely to be able to answer their problem statement with the provided data given what they've discovered during EDA?
-
-**Preprocessing and Modeling**
-- Are categorical variables one-hot encoded?
-- Does the student investigate or manufacture features with linear relationships to the target?
-- Have the data been scaled appropriately?
-- Does the student properly split and/or sample the data for validation/training purposes?
-- Does the student utilize feature selection to remove noisy or multi-collinear features?
-- Does the student test and evaluate a variety of models to identify a production algorithm (**AT MINIMUM:** linear regression, lasso, and ridge)?
-- Does the student defend their choice of production model relevant to the data at hand and the problem?
-- Does the student explain how the model works and evaluate its performance successes/downfalls?
-
-**Evaluation and Conceptual Understanding**
-- Does the student accurately identify and explain the baseline score?
-- Does the student select and use metrics relevant to the problem objective?
-- Is more than one metric utilized in order to better assess performance?
-- Does the student interpret the results of their model for purposes of inference?
-- Is domain knowledge demonstrated when interpreting results?
-- Does the student provide appropriate interpretation with regards to descriptive and inferential statistics?
-
-**Conclusion and Recommendations**
-- Does the student provide appropriate context to connect individual steps back to the overall project?
-- Is it clear how the final recommendations were reached?
-- Are the conclusions/recommendations clearly stated?
-- Does the conclusion answer the original problem statement?
-- Does the student address how findings of this research can be applied for the benefit of stakeholders?
-- Are future steps to move the project forward identified?
-
-### Organization and Professionalism
-
-**Project Organization**
-- Are modules imported correctly (using appropriate aliases)?
-- Are data imported/saved using relative paths?
-- Does the README provide a good executive summary of the project?
-- Is markdown formatting used appropriately to structure notebooks?
-- Are there an appropriate amount of comments to support the code?
-- Are files & directories organized correctly?
-- Are there unnecessary files included?
-- Do files and directories have well-structured, appropriate, consistent names?
-
-**Visualizations**
-- Are sufficient visualizations provided?
-- Do plots accurately demonstrate valid relationships?
-- Are plots labeled properly?
-- Are plots interpreted appropriately?
-- Are plots formatted and scaled appropriately for inclusion in a notebook-based technical report?
-
-**Python Syntax and Control Flow**
-- Is care taken to write human readable code?
-- Is the code syntactically correct (no runtime errors)?
-- Does the code generate desired results (logically correct)?
-- Does the code follows general best practices and style guidelines?
-- Are Pandas functions used appropriately?
-- Are `sklearn` methods used appropriately?
-
-**Presentation**
-- Is the problem statement clearly presented?
-- Does a strong narrative run through the presentation building toward a final conclusion?
-- Are the conclusions/recommendations clearly stated?
-- Is the level of technicality appropriate for the intended audience?
-- Is the student substantially over or under time?
-- Does the student appropriately pace their presentation?
-- Does the student deliver their message with clarity and volume?
-- Are appropriate visualizations generated for the intended audience?
-- Are visualizations necessary and useful for supporting conclusions/explaining findings?
-
-In order to pass the project, students must earn a minimum score of 1 for each category.
-- Earning below a 1 in one or more of the above categories would result in a failing project.
-- While a minimum of 1 in each category is the required threshold for graduation, students should aim to earn at least an average of 1.5 across each category. An average score below 1.5, while it may be passing, means students may want to solicit specific feedback in order to significantly improve the project before showcasing it as part of a portfolio or the job search.
-
-### REMEMBER:
-
-This is a learning environment and you are encouraged to try new things, even if they don't work out as well as you planned! While this rubric outlines what we look for in a _good_ project, it is up to you to go above and beyond to create a _great_ project. **Learn from your failures and you'll be prepared to succeed in the workforce**.
+Based on the fit of the model, this could be a fairly helpful model for helping the client predict sales prices of homes based on their location and basement data, accounting for about 80% of the variation in the data.
